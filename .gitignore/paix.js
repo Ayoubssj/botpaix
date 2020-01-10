@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
-client.login("NjYyMzM5MzQ2MzA0NTk4MDI2.Xg4jCw.3AHgSGwR9MSVkdp64WMlrfsmX6M");
+client.login(process.env.TOKEN);
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('database.json');
