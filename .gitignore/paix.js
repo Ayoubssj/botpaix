@@ -5,6 +5,7 @@ const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('database.json');
 const db = low(adapter);
+const { get } = require('snekfetch')
 
 db.defaults({ histoires : [], xp: []}).write()
 
@@ -152,6 +153,27 @@ client.on("message", async(message) => {
 
 
   var msgauthor = message.author.id
+  
+  if(message.content.startsWith("!ramadan")){
+
+    var ville = message.content.slice(9)
+    const { body } = await get(`https://api.pray.zone/v2/times/today.json?city=${ville}&school=3`);
+
+    var maghreb = body.results.datetime[0].times.Maghrib;
+    heure = maghreb.slice(0,2);
+    minute = maghreb.slice(3,5);
+    aujourdhui = new Date();
+    horaire = new Date(`${aujourdhui.getMonth()+1} ${aujourdhui.getDate()} ${aujourdhui.getFullYear()} ${heure}:${minute}`)
+    tempsrestant = horaire-aujourdhui;
+    tempsrestant = tempsrestant/60000;
+    if (tempsrestant > 0){
+      heurerest = Math.trunc(tempsrestant/60)
+      minrest= Math.round((tempsrestant/60 - heurerest)*60)
+      message.channel.send(`Il reste ${heurerest} heures et ${minrest} minutes avant le Maghreb à ${ville}\nL'heure du maghreb est **${maghreb}** aujourd'hui`)
+    }else{
+      message.channel.send(`Le Maghreb est déjà passé\nSi c'était un bon bot là ça devrait sortir les horaires de dedmain mais vas-y flemme frérot aujourd'hui c'était ${maghreb} demain ça sera presque pareil va manger ou faire tarawih au lieu de rester sur discord`)
+    }
+  }
  
   if(message.author.bot)return;
 
